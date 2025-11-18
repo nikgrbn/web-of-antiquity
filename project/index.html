@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Web of Antiquity – Classical Reception Graph</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header id="app-header">
+    <div class="header-title">
+      <h1>Web of Antiquity</h1>
+      <p>Ancient Greece &amp; Rome in Modern Popular Culture</p>
+    </div>
+    <div class="header-badge">
+      <span>Course Project · Gods &amp; Gladiators</span>
+    </div>
+  </header>
+
+  <main id="app-layout">
+    <!-- LEFT: Filters -->
+    <aside id="left-panel">
+      <section class="panel-section">
+        <h2>Node Types</h2>
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" class="filter-type" value="Ancient Source" checked />
+            <span class="checkbox-label-dot type-ancient"></span>
+            Ancient Sources
+          </label>
+          <label>
+            <input type="checkbox" class="filter-type" value="Modern Media" checked />
+            <span class="checkbox-label-dot type-modern"></span>
+            Modern Media
+          </label>
+          <label>
+            <input type="checkbox" class="filter-type" value="Trope" checked />
+            <span class="checkbox-label-dot type-trope"></span>
+            Tropes
+          </label>
+          <label>
+            <input type="checkbox" class="filter-type" value="Political Use" checked />
+            <span class="checkbox-label-dot type-political"></span>
+            Political Uses
+          </label>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h2>Clusters</h2>
+        <label class="select-label" for="cluster-select">Highlight by theme</label>
+        <select id="cluster-select">
+          <option value="all">All clusters</option>
+          <option value="Gladiators & Spartacus">Gladiators &amp; Spartacus</option>
+          <option value="Persia vs Greece / 300">Persia vs Greece / 300</option>
+          <option value="Greek Tragedy & Feminism">Greek Tragedy &amp; Feminism</option>
+          <option value="Rome, Christianity & Jews">Rome, Christianity &amp; Jews</option>
+          <option value="Rome as Empire / Fascism">Rome as Empire / Fascism</option>
+          <option value="Decadence & Sexuality">Decadence &amp; Sexuality</option>
+        </select>
+        <p class="panel-hint">
+          Use types + clusters to see how interpretations shift between antiquity and modern media.
+        </p>
+      </section>
+
+      <section class="panel-section">
+        <h2>Legend</h2>
+        <ul class="legend-list">
+          <li><span class="legend-dot type-ancient"></span>Ancient texts / history</li>
+          <li><span class="legend-dot type-modern"></span>Films, series, games</li>
+          <li><span class="legend-dot type-trope"></span>Tropes &amp; motifs</li>
+          <li><span class="legend-dot type-political"></span>Political uses</li>
+        </ul>
+      </section>
+    </aside>
+
+    <!-- CENTER: Graph -->
+    <section id="center-panel">
+      <div id="network"></div>
+      <div id="network-overlay">
+        <p>Drag nodes · Scroll to zoom · Click a node for details</p>
+      </div>
+    </section>
+
+    <!-- RIGHT: Node Info -->
+    <aside id="info-panel">
+      <div id="info-empty">
+        <h2>Node Details</h2>
+        <p>Select a node in the graph to see:</p>
+        <ul>
+          <li>Ancient / modern source</li>
+          <li>Cluster &amp; connections</li>
+          <li>Short analytical note</li>
+        </ul>
+      </div>
+      <div id="info-content" class="hidden"></div>
+    </aside>
+  </main>
+
+  <footer id="app-footer">
+    <span>Web of Antiquity – exploratory map of classical reception</span>
+  </footer>
+
+  <!-- Libraries & scripts -->
+  <script src="lib/vis-network.min.js"></script>
+  <script src="js/data.js" defer></script>
+  <script src="js/graph.js" defer></script>
+  <script src="js/ui.js" defer></script>
+</body>
+</html>
