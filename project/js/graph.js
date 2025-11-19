@@ -1,8 +1,10 @@
-// Graph initialization and basic interactions (click, hover)
+// Graph initialization and interactions
 
 let network = null;
 let nodesDataset = null;
 let edgesDataset = null;
+
+let lastHoverNodeId = null;
 
 function getTypeColor(type) {
   switch (type) {
@@ -22,17 +24,26 @@ function getTypeColor(type) {
 window.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("network");
 
-  // Enrich node objects with visual properties and tooltips
+  // Enrich nodes with visual style + tooltip
   const styledNodes = nodes.map((node) => {
     const color = getTypeColor(node.type);
     return {
       ...node,
       shape: "dot",
-      size: 14,
+      size: 16,
+      borderWidth: 1.5,
+      shadow: {
+        enabled: true,
+        color: "rgba(0,0,0,0.8)",
+        size: 6,
+        x: 0,
+        y: 2
+      },
       font: {
-        color: "#f5f5f5",
+        color: "#fdfdfd",
         face: "system-ui",
-        size: 14
+        size: 14,
+        strokeWidth: 0
       },
       color: {
         background: color.background,
@@ -46,23 +57,28 @@ window.addEventListener("DOMContentLoaded", () => {
           border: "#ffffff"
         }
       },
-      title: `<strong>${node.label}</strong><br/><span style="font-size: 11px; opacity: 0.85;">${node.type} · ${node.cluster}</span>`
+      title: `<strong>${node.label}</strong><br /><span style="font-size: 11px; opacity: 0.85;">${node.type} · ${node.cluster}</span>`
     };
   });
 
-  // Edge styling
   const styledEdges = edges.map((edge) => ({
     ...edge,
-    arrows: "to",
-    color: {
-      color: "rgba(160, 180, 230, 0.7)",
-      highlight: "rgba(255, 255, 255, 0.9)",
-      hover: "rgba(230, 235, 255, 0.9)"
+    arrows: {
+      to: {
+        enabled: true,
+        scaleFactor: 0.7
+      }
     },
-    width: 1.2,
+    color: {
+      color: "rgba(158, 176, 230, 0.75)",
+      highlight: "rgba(255, 255, 255, 0.95)",
+      hover: "rgba(230, 236, 255, 0.95)"
+    },
+    width: 1.4,
     smooth: {
       enabled: true,
-      type: "dynamic"
+      type: "dynamic",
+      roundness: 0.4
     }
   }));
 
@@ -75,51 +91,123 @@ window.addEventListener("DOMContentLoaded", () => {
   };
 
   const options = {
+    layout: {
+      improvedLayout: true
+    },
     physics: {
       enabled: true,
       stabilization: {
-        iterations: 120
+        enabled: true,
+        iterations: 150,
+        updateInterval: 30
       },
       barnesHut: {
-        gravitationalConstant: -3500,
-        centralGravity: 0.25,
+        gravitationalConstant: -4500,
+        centralGravity: 0.3,
         springLength: 150,
         springConstant: 0.03,
-        damping: 0.19
+        damping: 0.18,
+        avoidOverlap: 0.25
       }
     },
     interaction: {
       hover: true,
+      hoverConnectedEdges: true,
       tooltipDelay: 80,
-      hideEdgesOnDrag: false,
       zoomView: true,
-      dragView: true
+      dragView: true,
+      multiselect: false,
+      selectable: true
+    },
+    nodes: {
+      scaling: {
+        min: 10,
+        max: 26
+      }
     },
     edges: {
-      selectionWidth: 1.5
+      selectionWidth: 2,
+      smooth: {
+        enabled: true
+      }
     }
   };
 
   network = new vis.Network(container, data, options);
+  network.setOptions({ physics: { stabilization: false } }); // finish stabilizing faster
 
-  // Click to show node info
+  /* -----------------------------
+     INTERACTION BEHAVIOR
+     ----------------------------- */
+
+  // Click -> show info + focus that node
   network.on("click", (params) => {
     if (params.nodes && params.nodes.length > 0) {
       const nodeId = params.nodes[0];
+
+      // Focus on the selected node with gentle zoom
+      network.focus(nodeId, {
+        scale: 1.1,
+        animation: {
+          duration: 500,
+          easingFunction: "easeInOutQuad"
+        }
+      });
+
       if (typeof window.showNodeInfo === "function") {
         window.showNodeInfo(nodeId);
       }
     }
   });
 
-  // Expose for UI module
+  // Hover -> temporarily enlarge node
+  network.on("hoverNode", (params) => {
+    const nodeId = params.node;
+    if (!nodeId) return;
+
+    // Reset previous hover
+    if (lastHoverNodeId && lastHoverNodeId !== nodeId) {
+      nodesDataset.update({ id: lastHoverNodeId, size: 16 });
+    }
+
+    nodesDataset.update({ id: nodeId, size: 22 });
+    lastHoverNodeId = nodeId;
+  });
+
+  // Blur -> shrink back to normal
+  network.on("blurNode", (params) => {
+    const nodeId = params.node;
+    if (!nodeId) return;
+
+    nodesDataset.update({ id: nodeId, size: 16 });
+    if (lastHoverNodeId === nodeId) {
+      lastHoverNodeId = null;
+    }
+  });
+
+  // Cursor feedback (hand vs default)
+  network.on("dragStart", () => {
+    container.style.cursor = "grabbing";
+  });
+
+  network.on("dragEnd", () => {
+    container.style.cursor = "default";
+  });
+
+  network.on("zoom", () => {
+    container.style.cursor = "grab";
+    setTimeout(() => {
+      container.style.cursor = "default";
+    }, 250);
+  });
+
+  // Expose graph state
   window.graphState = {
     network,
     nodesDataset,
     edgesDataset
   };
 
-  // Let UI hook itself up once the graph is ready
   if (typeof window.initUI === "function") {
     window.initUI();
   }
