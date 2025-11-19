@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Web of Antiquity – Classical Reception Graph</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="css/styles.css" />
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Web of Antiquity - Classical Reception Graph</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  
 <body>
   <header id="app-header">
     <div class="header-title">
       <h1>Web of Antiquity</h1>
       <p>Ancient Greece &amp; Rome in Modern Popular Culture</p>
     </div>
-    <div class="header-badge">
-      <span>Course Project · Gods &amp; Gladiators</span>
+    <div class="header-meta">
+      <span class="header-badge">Course Project · Gods &amp; Gladiators</span>
+      <span class="header-author-badge">by Nikita G.</span>
     </div>
   </header>
+  
 
   <main id="app-layout">
     <!-- LEFT: Filters -->
@@ -76,7 +84,9 @@
 
     <!-- CENTER: Graph -->
     <section id="center-panel">
-      <div id="network"></div>
+      <div id="network-frame">
+        <div id="network"></div>
+      </div>
       <div id="network-overlay">
         <p>Drag nodes · Scroll to zoom · Click a node for details</p>
       </div>

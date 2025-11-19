@@ -1,371 +1,570 @@
 /* Global layout / theme */
 
 :root {
-    --bg-main: #050608;
-    --bg-panel: #111216;
-    --bg-panel-alt: #151821;
-    --accent: #f5c76a;
-    --accent-soft: #f2c078;
-    --text-main: #f5f5f5;
-    --text-muted: #a3a7ba;
-    --border-subtle: #262a3b;
-    --shadow-soft: 0 14px 35px rgba(0, 0, 0, 0.5);
-  
-    --type-ancient: #f6d365;
-    --type-modern: #7f5af0;
-    --type-trope: #ff6b6b;
-    --type-political: #2ec4b6;
+  --bg-main: #050608;
+  --bg-panel: #111216;
+  --bg-panel-alt: #151821;
+  --accent: #f5c76a;
+  --accent-soft: #f2c078;
+  --text-main: #f5f5f5;
+  --text-muted: #a3a7ba;
+  --border-subtle: #262a3b;
+  --shadow-soft: 0 14px 35px rgba(0, 0, 0, 0.5);
+
+  --type-ancient: #f6d365;
+  --type-modern: #7f5af0;
+  --type-trope: #ff6b6b;
+  --type-political: #2ec4b6;
+
+  --glass-bg: rgba(8, 10, 18, 0.92);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, #2a2c4a 0%, #0f0c29 35%, #000 100%),
+    radial-gradient(circle at bottom right, #1b263b 0%, #000 55%);
+  color: var(--text-main);
+  font-family: "Space Grotesk", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Header */
+
+.header-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: linear-gradient(120deg, rgba(5, 6, 8, 0.97), rgba(24, 20, 38, 0.97));
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.65);
+}
+
+.header-title {
+  position: relative;
+  padding-left: 4px;
+}
+
+.header-title h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: linear-gradient(120deg, #ffffff, #f8dda4, #e09eff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.header-title p {
+  margin: 4px 0 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.header-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 72px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f5c76a, #7f5af0);
+  opacity: 0.85;
+}
+
+.header-badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(245, 199, 106, 0.08);
+  border: 1px solid rgba(245, 199, 106, 0.6);
+  font-size: 0.75rem;
+  color: var(--accent-soft);
+  display: inline-flex;
+  align-items: center;
+}
+
+.header-author-badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(127, 90, 240, 0.12);
+  border: 1px solid rgba(127, 90, 240, 0.7);
+  font-size: 0.75rem;
+  color: #c7beff;
+  display: inline-flex;
+  align-items: center;
+}
+
+
+/* Main layout */
+
+#app-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 340px;
+  grid-template-rows: minmax(0, calc(100vh - 80px));
+  gap: 0;
+}
+
+/* Panels */
+
+#left-panel,
+#info-panel {
+  background: var(--glass-bg);
+  border-right: 1px solid var(--border-subtle);
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.6);
+  padding: 14px 14px 18px;
+  overflow-y: auto;
+}
+
+#info-panel {
+  border-right: none;
+  border-left: 1px solid var(--border-subtle);
+}
+
+/* CENTER PANEL + CLIPPED FRAME */
+
+#center-panel {
+  position: relative;
+  background: radial-gradient(circle at center, #101322 0%, #050608 55%, #000 100%);
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+/* This is the actual visible frame that clips the graph */
+#network-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  overflow: hidden; /* <- graph cannot escape this box */
+  border: 1px solid rgba(104, 113, 160, 0.55);
+  box-shadow:
+    0 0 40px rgba(72, 86, 168, 0.5),
+    0 0 120px rgba(255, 203, 112, 0.15);
+}
+
+/* Grid/glow sits on top of the canvas, but still inside the frame */
+#network-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.3;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+
+/* Ensure the network fills the frame */
+#network {
+  width: 100%;
+  height: 100%;
+}
+
+/* Keep overlay above everything */
+#network-overlay {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: rgba(8, 10, 18, 0.88);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  border: 1px solid rgba(68, 78, 113, 0.7);
+  backdrop-filter: blur(10px);
+  pointer-events: none;
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  animation: overlay-pulse 4s ease-in-out infinite;
+  z-index: 2;
+}
+
+
+/* Network canvas */
+
+#network {
+  width: 100%;
+  height: 100%;       /* fill the center panel, not the whole viewport */
+}
+
+/* Overlay text on graph */
+
+#network-overlay {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: rgba(8, 10, 18, 0.88);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  border: 1px solid rgba(68, 78, 113, 0.7);
+  backdrop-filter: blur(10px);
+  pointer-events: none;
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  animation: overlay-pulse 4s ease-in-out infinite;
+}
+
+#network-overlay::before {
+  content: "●";
+  font-size: 0.6rem;
+  color: var(--accent-soft);
+  text-shadow: 0 0 8px rgba(245, 199, 106, 0.9);
+}
+
+@keyframes overlay-pulse {
+  0%, 100% {
+    opacity: 0.9;
   }
-  
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
+  50% {
+    opacity: 0.55;
   }
-  
-  body {
-    margin: 0;
-    padding: 0;
-    background: radial-gradient(circle at top, #24243e 0%, #0f0c29 40%, #000 100%);
-    color: var(--text-main);
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  }
-  
-  /* Header */
-  
-  #app-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 22px;
-    border-bottom: 1px solid var(--border-subtle);
-    background: linear-gradient(90deg, rgba(5, 6, 8, 0.98), rgba(24, 20, 38, 0.98));
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-  
-  .header-title h1 {
-    margin: 0;
-    font-size: 1.4rem;
-    letter-spacing: 0.03em;
-  }
-  
-  .header-title p {
-    margin: 2px 0 0;
-    font-size: 0.82rem;
-    color: var(--text-muted);
-  }
-  
-  .header-badge {
-    padding: 6px 12px;
-    border-radius: 999px;
-    background: rgba(245, 199, 106, 0.08);
-    border: 1px solid rgba(245, 199, 106, 0.6);
-    font-size: 0.75rem;
-    color: var(--accent-soft);
-  }
-  
-  /* Main layout */
-  
+}
+
+/* Panel sections */
+
+.panel-section {
+  margin-bottom: 18px;
+  padding: 10px 10px 12px;
+  background: radial-gradient(circle at top left, #161827 0%, #0c0e17 60%);
+  border-radius: 14px;
+  border: 1px solid rgba(61, 68, 104, 0.7);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.18s ease-out, box-shadow 0.18s ease-out, border-color 0.18s ease-out;
+}
+
+.panel-section:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.8);
+  border-color: rgba(126, 140, 214, 0.9);
+}
+
+.panel-section h2 {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+}
+
+.panel-hint {
+  margin: 6px 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* Checkbox styling */
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.86rem;
+  color: var(--text-main);
+  cursor: pointer;
+  padding: 5px 6px;
+  border-radius: 10px;
+  transition: background 0.15s ease-out, transform 0.1s ease-out;
+}
+
+.checkbox-group label:hover {
+  background: rgba(45, 51, 89, 0.6);
+  transform: translateY(-0.5px);
+}
+
+.checkbox-group input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 14px;
+  height: 14px;
+}
+
+.checkbox-label-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+/* Dots by type */
+
+.type-ancient {
+  background: var(--type-ancient);
+}
+
+.type-modern {
+  background: var(--type-modern);
+}
+
+.type-trope {
+  background: var(--type-trope);
+}
+
+.type-political {
+  background: var(--type-political);
+}
+
+/* Select / cluster filter */
+
+.select-label {
+  display: block;
+  font-size: 0.8rem;
+  margin-bottom: 4px;
+  color: var(--text-muted);
+}
+
+#cluster-select {
+  width: 100%;
+  padding: 7px 9px;
+  border-radius: 10px;
+  background: #0a0b12;
+  border: 1px solid rgba(69, 76, 115, 0.9);
+  color: var(--text-main);
+  font-size: 0.86rem;
+  outline: none;
+  transition: border-color 0.18s ease-out, box-shadow 0.18s ease-out, background 0.18s ease-out;
+}
+
+#cluster-select:focus {
+  border-color: var(--accent-soft);
+  box-shadow: 0 0 0 1px rgba(245, 199, 106, 0.6);
+  background: #070811;
+}
+
+/* Legend */
+
+.legend-list {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.legend-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+}
+
+/* Info panel */
+
+#info-empty h2 {
+  margin-top: 0;
+  font-size: 1rem;
+}
+
+#info-empty p {
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
+
+#info-empty ul {
+  padding-left: 18px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+#info-content.hidden,
+#info-empty.hidden {
+  display: none;
+}
+
+#info-content {
+  font-size: 0.86rem;
+}
+
+#info-content {
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+#info-content p {
+  margin: 2px 0 10px; /* small gap under each text block */
+}
+
+.info-title {
+  margin: 0 0 6px;    /* slightly bigger gap under main title */
+  font-size: 1.05rem;
+}
+
+.info-subtitle {
+  margin: 0 0 14px;   /* gap between subtitle and pills */
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.info-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 16px;   /* clean space before first “Description” title */
+}
+
+.info-pill {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  border: 1px solid rgba(80, 90, 128, 0.9);
+  background: rgba(18, 22, 37, 0.9);
+}
+
+.info-pill.type-ancient {
+  border-color: rgba(246, 211, 101, 0.8);
+}
+
+.info-pill.type-modern {
+  border-color: rgba(127, 90, 240, 0.8);
+}
+
+.info-pill.type-trope {
+  border-color: rgba(255, 107, 107, 0.8);
+}
+
+.info-pill.type-political {
+  border-color: rgba(46, 196, 182, 0.8);
+}
+
+.info-section-title {
+  margin: 16px 0 4px;  /* big gap above each section title, small gap to its text */
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-soft);
+}
+
+.info-connected-list {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0;
+}
+
+.info-connected-list li {
+  margin-bottom: 4px;
+}
+
+.info-connected-list span {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+
+/* Footer */
+
+#app-footer {
+  padding: 8px 20px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-subtle);
+  background: #050608;
+  text-align: right;
+  opacity: 0.9;
+}
+
+/* Scrollbars (for panels) */
+
+#left-panel::-webkit-scrollbar,
+#info-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+#left-panel::-webkit-scrollbar-thumb,
+#info-panel::-webkit-scrollbar-thumb {
+  background: #33384c;
+  border-radius: 999px;
+}
+
+/* Responsive tweak */
+
+@media (max-width: 1000px) {
   #app-layout {
-    display: grid;
-    grid-template-columns: 250px minmax(0, 1fr) 320px;
-    grid-template-rows: minmax(0, calc(100vh - 80px));
-    gap: 0;
+    grid-template-columns: 230px minmax(0, 1fr);
+    grid-template-rows: minmax(0, calc(100vh - 140px)) 210px;
   }
-  
-  /* Panels */
-  
-  #left-panel,
+
   #info-panel {
-    background: rgba(7, 8, 12, 0.94);
-    border-right: 1px solid var(--border-subtle);
-    box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.6);
-    padding: 14px 14px 18px;
-    overflow-y: auto;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    border-left: none;
+    border-top: 1px solid var(--border-subtle);
   }
-  
-  #info-panel {
-    border-right: none;
-    border-left: 1px solid var(--border-subtle);
+
+  #network {
+    height: 100%;
+  }  
+
+  #app-header {
+    flex-wrap: wrap;
+    gap: 8px;
   }
-  
+
+  .header-badge {
+    order: 3;
+  }
+}
+
+@media (max-width: 720px) {
+  #app-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 260px minmax(0, calc(100vh - 260px));
+  }
+
+  #left-panel {
+    display: none;
+  }
+
   #center-panel {
     position: relative;
     background: radial-gradient(circle at center, #101322 0%, #050608 55%, #000 100%);
+    overflow: hidden; /* prevents nodes/canvas from spilling out */
   }
   
-  /* Network canvas */
-  
-  #network {
-    width: 100%;
-    height: calc(100vh - 80px);
-  }
-  
-  /* Overlay text on graph */
-  
-  #network-overlay {
-    position: absolute;
-    bottom: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 6px 14px;
-    border-radius: 999px;
-    background: rgba(8, 10, 18, 0.85);
-    color: var(--text-muted);
-    font-size: 0.78rem;
-    border: 1px solid rgba(68, 78, 113, 0.7);
-    backdrop-filter: blur(10px);
-    pointer-events: none;
-  }
-  
-  /* Panel sections */
-  
-  .panel-section {
-    margin-bottom: 18px;
-    padding: 10px 10px 12px;
-    background: radial-gradient(circle at top left, #161827 0%, #0c0e17 60%);
-    border-radius: 14px;
-    border: 1px solid rgba(61, 68, 104, 0.7);
-    box-shadow: var(--shadow-soft);
-  }
-  
-  .panel-section h2 {
-    margin: 0 0 8px;
-    font-size: 0.92rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--accent-soft);
-  }
-  
-  .panel-hint {
-    margin: 6px 0 0;
-    font-size: 0.78rem;
-    color: var(--text-muted);
-  }
-  
-  /* Checkbox styling */
-  
-  .checkbox-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-top: 4px;
-  }
-  
-  .checkbox-group label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.86rem;
-    color: var(--text-main);
-    cursor: pointer;
-  }
-  
-  .checkbox-group input[type="checkbox"] {
-    accent-color: var(--accent);
-  }
-  
-  .checkbox-label-dot {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 999px;
-  }
-  
-  /* Dots by type */
-  
-  .type-ancient {
-    background: var(--type-ancient);
-  }
-  
-  .type-modern {
-    background: var(--type-modern);
-  }
-  
-  .type-trope {
-    background: var(--type-trope);
-  }
-  
-  .type-political {
-    background: var(--type-political);
-  }
-  
-  /* Select / cluster filter */
-  
-  .select-label {
-    display: block;
-    font-size: 0.8rem;
-    margin-bottom: 4px;
-    color: var(--text-muted);
-  }
-  
-  #cluster-select {
-    width: 100%;
-    padding: 6px 8px;
-    border-radius: 8px;
-    background: #0a0b12;
-    border: 1px solid rgba(69, 76, 115, 0.9);
-    color: var(--text-main);
-    font-size: 0.86rem;
-  }
-  
-  /* Legend */
-  
-  .legend-list {
-    list-style: none;
-    padding: 0;
-    margin: 4px 0 0;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-  }
-  
-  .legend-list li {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 3px;
-  }
-  
-  .legend-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-  }
-  
-  /* Info panel */
-  
-  #info-empty h2 {
-    margin-top: 0;
-    font-size: 1rem;
-  }
-  
-  #info-empty p {
-    font-size: 0.86rem;
-    color: var(--text-muted);
-  }
-  
-  #info-empty ul {
-    padding-left: 18px;
-    font-size: 0.82rem;
-    color: var(--text-muted);
-  }
-  
-  #info-content.hidden,
-  #info-empty.hidden {
+
+  #info-panel {
     display: none;
   }
-  
-  #info-content {
-    font-size: 0.86rem;
+
+  #network {
+    height: 100%;
   }
-  
-  .info-title {
-    margin: 0 0 2px;
-    font-size: 1.05rem;
-  }
-  
-  .info-subtitle {
-    margin: 0 0 10px;
-    font-size: 0.82rem;
-    color: var(--text-muted);
-  }
-  
-  .info-pill-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin: 8px 0 10px;
-  }
-  
-  .info-pill {
-    padding: 4px 8px;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    border: 1px solid rgba(80, 90, 128, 0.9);
-    background: rgba(18, 22, 37, 0.9);
-  }
-  
-  .info-pill.type-ancient {
-    border-color: rgba(246, 211, 101, 0.8);
-  }
-  
-  .info-pill.type-modern {
-    border-color: rgba(127, 90, 240, 0.8);
-  }
-  
-  .info-pill.type-trope {
-    border-color: rgba(255, 107, 107, 0.8);
-  }
-  
-  .info-pill.type-political {
-    border-color: rgba(46, 196, 182, 0.8);
-  }
-  
-  .info-section-title {
-    margin: 10px 0 4px;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--accent-soft);
-  }
-  
-  .info-connected-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .info-connected-list li {
-    margin-bottom: 3px;
-  }
-  
-  .info-connected-list span {
-    color: var(--text-muted);
-    font-size: 0.8rem;
-  }
-  
-  /* Footer */
-  
-  #app-footer {
-    padding: 8px 20px;
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    border-top: 1px solid var(--border-subtle);
-    background: #050608;
-  }
-  
-  /* Scrollbars (for panels) */
-  
-  #left-panel::-webkit-scrollbar,
-  #info-panel::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  #left-panel::-webkit-scrollbar-thumb,
-  #info-panel::-webkit-scrollbar-thumb {
-    background: #33384c;
-    border-radius: 999px;
-  }
-  
-  /* Responsive tweak */
-  
-  @media (max-width: 1000px) {
-    #app-layout {
-      grid-template-columns: 240px minmax(0, 1fr);
-      grid-template-rows: minmax(0, calc(100vh - 140px)) 200px;
-    }
-  
-    #info-panel {
-      grid-column: 1 / -1;
-      grid-row: 2;
-      border-left: none;
-      border-top: 1px solid var(--border-subtle);
-    }
-  
-    #network {
-      height: calc(100vh - 140px);
-    }
-  }
-  
+}
